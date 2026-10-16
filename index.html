@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Portal - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <h1>College Portal</h1>
+    <p class="subtitle">Sign in to continue</p>
+
+    <div class="role-tabs">
+      <button type="button" id="tab-student" class="active">Student</button>
+      <button type="button" id="tab-admin">Admin</button>
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <div class="hint">
+      <strong>Demo accounts</strong><br>
+      Admin: <code>admin</code> / <code>admin123</code><br>
+      Student: <code>student1</code> / <code>student123</code>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    // If already logged in, skip the login page
+    const existing = getSession();
+    if (existing && DASHBOARDS[existing.role]) {
+      window.location.href = DASHBOARDS[existing.role];
+    }
+
+    let selectedRole = "student";
+    const tabStudent = document.getElementById("tab-student");
+    const tabAdmin = document.getElementById("tab-admin");
+    const errorBox = document.getElementById("error");
+
+    function setRole(role) {
+      selectedRole = role;
+      tabStudent.classList.toggle("active", role === "student");
+      tabAdmin.classList.toggle("active", role === "admin");
+      errorBox.style.display = "none";
+    }
+
+    tabStudent.addEventListener("click", () => setRole("student"));
+    tabAdmin.addEventListener("click", () => setRole("admin"));
+
+    document.getElementById("login-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      const result = login(username, password, selectedRole);
+      if (!result.ok) {
+        errorBox.textContent = result.message;
+        errorBox.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
